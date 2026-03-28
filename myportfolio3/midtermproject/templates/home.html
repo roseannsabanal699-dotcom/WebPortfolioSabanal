@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose Ann Sabanal | Portfolio 2026</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        /* --- CORE STYLING --- */
+        body {
+            background-color: #0f172a;
+            font-family: 'Inter', sans-serif;
+            color: #f1f5f9;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* --- PAGE TRANSITION LOGIC --- */
+        .content-section {
+            display: none;
+            animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* --- MENU TOGGLE --- */
+        .menu-toggle {
+            position: fixed; top: 25px; left: 25px; width: 55px; height: 55px;
+            background: #fbbf24; border-radius: 15px; cursor: pointer; z-index: 2001;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.3);
+        }
+
+        .hamburger { width: 25px; height: 3px; background: #0f172a; position: relative; }
+        .hamburger::before, .hamburger::after { content: ''; position: absolute; width: 25px; height: 3px; background: #0f172a; transition: 0.3s; }
+        .hamburger::before { top: -8px; }
+        .hamburger::after { top: 8px; }
+
+        .menu-toggle.active .hamburger { background: transparent; }
+        .menu-toggle.active .hamburger::before { transform: rotate(45deg); top: 0; }
+        .menu-toggle.active .hamburger::after { transform: rotate(-45deg); top: 0; }
+
+        /* --- SIDEBAR NAV --- */
+        .sidebar-nav {
+            width: 300px; height: 100vh; position: fixed; left: -320px; top: 0;
+            background: #1e293b; border-right: 1px solid #334155; padding: 100px 20px 40px;
+            z-index: 2000; transition: 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+        }
+        .sidebar-nav.active { left: 0; }
+
+        .nav-link-custom {
+            color: #94a3b8; font-weight: 600; padding: 14px 18px; border-radius: 12px;
+            margin-bottom: 8px; display: flex; align-items: center; text-decoration: none;
+            cursor: pointer; transition: 0.3s; font-size: 0.9rem;
+        }
+        .nav-link-custom:hover, .nav-link-custom.active {
+            color: #0f172a; background: #fbbf24; transform: translateX(10px);
+        }
+        .nav-link-custom i { margin-right: 12px; font-size: 1.1rem; }
+
+        /* --- LAYOUT --- */
+        .main-wrapper {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .main-card {
+            background: #1e293b;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            width: 100%;
+            max-width: 1100px;
+            height: 85vh;
+        }
+
+        .sidebar-profile { background: #162031; padding: 60px 15px; text-align: center; }
+        .profile-img {
+            width: 140px; height: 140px; border-radius: 50%;
+            border: 5px solid #fbbf24; object-fit: cover; margin-bottom: 20px;
+        }
+
+        .content-area { padding: 50px; height: 100%; overflow-y: auto; }
+        .section-title { color: #fbbf24; letter-spacing: 4px; font-weight: 800; font-size: 0.7rem; display: block; margin-bottom: 15px; text-transform: uppercase;}
+
+        /* --- CARDS & IMAGES --- */
+        .info-card { background: #0f172a; border: 1px solid #334155; border-radius: 20px; padding: 20px; transition: 0.3s; height: 100%; }
+        .info-card:hover { border-color: #fbbf24; transform: translateY(-5px); }
+        .info-card i { font-size: 2rem; color: #fbbf24; margin-bottom: 15px; display: block; }
+
+        .project-img-container {
+            width: 100%;
+            height: 180px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 15px;
+            border: 1px solid #334155;
+        }
+
+        .project-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .info-card:hover .project-img-container img {
+            transform: scale(1.1);
+        }
+
+        .btn-contact { background: #fbbf24; color: #0f172a; border-radius: 50px; padding: 15px 40px; font-weight: 800; border: none; transition: 0.3s; }
+        .btn-contact:hover { background: #fcd34d; transform: scale(1.05); }
+
+        .social-link { transition: 0.3s; color: #94a3b8; text-decoration: none; }
+        .social-link:hover { color: #fbbf24; transform: translateY(-3px); }
+
+        @media (max-width: 992px) {
+            body { overflow-y: auto; height: auto; }
+            .main-card { height: auto; border-radius: 20px; }
+            .content-area { padding: 30px; }
+            .sidebar-nav { width: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="menu-toggle" id="menuToggle">
+    <div class="hamburger"></div>
+</div>
+
+<div class="sidebar-nav shadow-lg" id="sidebar">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-white mb-0">ROSE<span class="text-warning">.</span></h2>
+    </div>
+    <nav class="nav flex-column">
+        <div class="nav-link-custom active" onclick="showPage('home-section', this)"><i class="bi bi-house-door-fill"></i> Home</div>
+        <div class="nav-link-custom" onclick="showPage('about-section', this)"><i class="bi bi-person-badge-fill"></i> About</div>
+        <div class="nav-link-custom" onclick="showPage('education-section', this)"><i class="bi bi-mortarboard-fill"></i> Education</div>
+        <div class="nav-link-custom" onclick="showPage('skills-section', this)"><i class="bi bi-cpu-fill"></i> Skills</div>
+        <div class="nav-link-custom" onclick="showPage('projects-section', this)"><i class="bi bi-folder-fill"></i> Projects</div>
+        <div class="nav-link-custom" onclick="showPage('hobbies-section', this)"><i class="bi bi-heart-pulse-fill"></i> Hobbies</div>
+        <div class="nav-link-custom" onclick="showPage('contact-section', this)"><i class="bi bi-chat-left-dots-fill"></i> Contact</div>
+    </nav>
+</div>
+
+<div class="main-wrapper">
+    <div class="card main-card">
+        <div class="row g-0 h-100">
+            <div class="col-lg-4 sidebar-profile d-flex flex-column align-items-center justify-content-center">
+                <img src="{% static 'roseprofile.jpg' %}" class="profile-img shadow-lg" alt="Rose Ann Sabanal">
+                <h2 class="text-white fw-800">Rose Ann Sabanal</h2>
+                <p class="text-warning fw-bold small text-uppercase">Willing to learn</p>
+                <div class="mt-3">
+                    <a href="https://github.com/roseannsabanal699-dotcom" target="_blank" class="social-link mx-2 fs-4"><i class="bi bi-github"></i></a>
+                    <a href="https://www.linkedin.com/in/sabanal-rose-ann-a-48543b3b1" target="_blank" class="social-link mx-2 fs-4"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://www.instagram.com/roseannsabanal699/" target="_blank" class="social-link mx-2 fs-4"><i class="bi bi-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1HiGFVCNpU/" target="_blank" class="social-link mx-2 fs-4"><i class="bi bi-facebook"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-8 content-area">
+
+                <div id="home-section" class="content-section active">
+                    <span class="section-title">// PORTFOLIO 2026</span>
+                    <h1 class="display-4 fw-bold text-white mb-4">Welcome to My <br><span class="text-warning">Portfolio.</span></h1>
+                    <p class="text-secondary fs-5">Open the menu on the top left to navigate through my professional journey and projects.</p>
+                </div>
+
+                <div id="about-section" class="content-section">
+                    <span class="section-title">// INTRODUCTION</span>
+                    <h2 class="text-white fw-bold mb-4">About Me</h2>
+                    <p class="text-secondary lead">I am a computer student at NORSU. I prefer learning by doing rather than just studying. I am always willing to learn new things. I work hard to improve my skills. I am determined to achieve my goals.</p>
+                </div>
+
+                <div id="education-section" class="content-section">
+                    <span class="section-title">// ACADEMIC</span>
+                    <h2 class="text-white fw-bold mb-4">Education</h2>
+                    <div class="info-card">
+                        <i class="bi bi-building"></i>
+                        <h5 class="text-white">Bachelor of Science major in Computer Science</h5>
+                        <p class="text-warning mb-1">Bayawan Santa Catalina - Negros Oriental State University</p>
+                        <p class="text-secondary small">Academic Year: 2025 - 2026</p>
+                    </div>
+                </div>
+
+                <div id="skills-section" class="content-section">
+                    <span class="section-title">// TECH STACK</span>
+                    <h2 class="text-white fw-bold mb-4">Expertise</h2>
+                    <div class="d-flex flex-wrap">
+                        <span class="badge border border-warning text-warning rounded-pill px-4 py-2 m-2">Python</span>
+                        <span class="badge border border-secondary text-secondary rounded-pill px-4 py-2 m-2">Django</span>
+                        <span class="badge border border-secondary text-secondary rounded-pill px-4 py-2 m-2">Bootstrap 5</span>
+                        <span class="badge border border-secondary text-secondary rounded-pill px-4 py-2 m-2">Adobe Photoshop</span>
+                        <span class="badge border border-secondary text-secondary rounded-pill px-4 py-2 m-2">InDesign</span>
+                    </div>
+                </div>
+
+                <div id="projects-section" class="content-section">
+                    <span class="section-title">// RECENT WORKS</span>
+                    <h2 class="text-white fw-bold mb-4">My Creative Works</h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <i class="bi bi-palette"></i>
+                                <h5 class="text-white">Photoshop Art</h5>
+                                <p class="text-secondary small">Visual stories and professional graphics.</p>
+                                <div class="project-img-container">
+                                    <img src="{% static 'photoshop.jpg' %}" alt="Photoshop Project">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <i class="bi bi-code-square"></i>
+                                <h5 class="text-white">Python Skill Up</h5>
+                                <p class="text-secondary small">Responsive applications using Django.</p>
+                                <div class="project-img-container">
+                                    <img src="{% static 'pythoncert.jpg' %}" alt="Python Project">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="hobbies-section" class="content-section">
+                    <span class="section-title">// PERSONAL</span>
+                    <h2 class="text-white fw-bold mb-4">My Hobbies</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3"><div class="info-card text-center"><i class="bi bi-camera"></i><span class="text-white fw-bold">Photography</span></div></div>
+                        <div class="col-md-6 col-lg-3"><div class="info-card text-center"><i class="bi bi-music-note-beamed"></i><span class="text-white fw-bold">Music</span></div></div>
+                        <div class="col-md-6 col-lg-3"><div class="info-card text-center"><i class="bi bi-egg-fried"></i><span class="text-white fw-bold">Cooking</span></div></div>
+                        <div class="col-md-6 col-lg-3"><div class="info-card text-center"><i class="bi bi-film"></i><span class="text-white fw-bold">Movies</span></div></div>
+                    </div>
+                </div>
+
+                <div id="contact-section" class="content-section">
+                    <span class="section-title">// GET IN TOUCH</span>
+                    <h2 class="text-white mb-4">Let's work <span class="text-warning">together.</span></h2>
+
+                    <div class="row g-3 mb-5">
+                        <div class="col-6 col-md-3">
+                            <a href="https://www.facebook.com/share/1HiGFVCNpU/" target="_blank" class="text-decoration-none">
+                                <div class="info-card text-center p-3">
+                                    <i class="bi bi-facebook mb-2"></i>
+                                    <span class="text-white d-block small">Facebook</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="https://www.instagram.com/roseannsabanal699/" target="_blank" class="text-decoration-none">
+                                <div class="info-card text-center p-3">
+                                    <i class="bi bi-instagram mb-2"></i>
+                                    <span class="text-white d-block small">Instagram</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="https://www.linkedin.com/in/sabanal-rose-ann-a-48543b3b1" target="_blank" class="text-decoration-none">
+                                <div class="info-card text-center p-3">
+                                    <i class="bi bi-linkedin mb-2"></i>
+                                    <span class="text-white d-block small">LinkedIn</span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a href="https://github.com/roseannsabanal699-dotcom" target="_blank" class="text-decoration-none">
+                                <div class="info-card text-center p-3">
+                                    <i class="bi bi-github mb-2"></i>
+                                    <span class="text-white d-block small">GitHub</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-secondary mb-1">EMAIL ME AT:</p>
+                        <h4 class="text-white">roseannsabanal699@gmail.com</h4>
+                    </div>
+                    <button class="btn-contact" data-bs-toggle="modal" data-bs-target="#applyModal">Send a Message</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-white">New Message</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm">
+                    <input type="text" class="form-control bg-transparent text-white border-secondary mb-3" placeholder="Your Name" required>
+                    <textarea class="form-control bg-transparent text-white border-secondary mb-3" rows="4" placeholder="Your Message" required></textarea>
+                    <button type="submit" class="btn btn-warning w-100 fw-bold">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function showPage(pageId, element) {
+        const sections = document.querySelectorAll('.content-section');
+        sections.forEach(sec => sec.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+
+        const navLinks = document.querySelectorAll('.nav-link-custom');
+        navLinks.forEach(link => link.classList.remove('active'));
+
+        if (element) {
+            element.classList.add('active');
+        }
+
+        document.getElementById('sidebar').classList.remove('active');
+        document.getElementById('menuToggle').classList.remove('active');
+        document.querySelector('.content-area').scrollTop = 0;
+    }
+
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        sidebar.classList.toggle('active');
+    });
+
+    document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert("Thank you! Your information has been delivered.");
+        bootstrap.Modal.getInstance(document.getElementById('applyModal')).hide();
+        this.reset();
+    });
+</script>
+
+</body>
+</html>
